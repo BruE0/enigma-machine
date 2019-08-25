@@ -27,13 +27,13 @@ class Rotor:
         self.offset = ord(start_position) - ord("a")
         self.turnover_notch = turnover_notch
 
-    def forward(self, char):
+    def forward_mapping(self, char):
         offsetted_char = int2char((chr2int(char) + self.offset)%26)
         rotor_internal_mapping = self.mapping[offsetted_char]
         end_position_for_next = int2char((chr2int(rotor_internal_mapping) - self.offset)%26)
         return end_position_for_next
 
-    def backward(self, char):
+    def backward_mapping(self, char):
         offsetted_char = int2char((chr2int(char) + self.offset)%26)
         rotor_internal_mapping = self.backmapping[offsetted_char]
         end_position_for_next = int2char((chr2int(rotor_internal_mapping) - self.offset)%26)
@@ -83,13 +83,13 @@ class Enigma:
 
         self.rotate_mechanism()
 
-        output = self.right_rotor.forward(char.lower())
-        output = self.mid_rotor.forward(output)
-        output = self.left_rotor.forward(output)
+        output = self.right_rotor.forward_mapping(char.lower())
+        output = self.mid_rotor.forward_mapping(output)
+        output = self.left_rotor.forward_mapping(output)
         output = self.reflector.mapping(output)
-        output = self.left_rotor.backward(output)
-        output = self.mid_rotor.backward(output)
-        output = self.right_rotor.backward(output)
+        output = self.left_rotor.backward_mapping(output)
+        output = self.mid_rotor.backward_mapping(output)
+        output = self.right_rotor.backward_mapping(output)
 
         return output
 
