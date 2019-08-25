@@ -7,17 +7,26 @@
 """
 
 
+from string import ascii_lowercase
+import logging
+
 class Rotor:
     def __init__(
-        self, mapping: list, turnover_notch: list = [], start_position: str = "a"
+        self, listmapping: list, turnover_notch: list = [], start_position: str = "a"
     ):
-        self.mapping = mapping
+        self.mapping_ahead = dict(zip(ascii_lowercase, listmapping))
+        self.mapping_back = dict(zip(listmapping, ascii_lowercase))
         self.offset = ord(start_position) - ord("a")
         self.turnover_notch = turnover_notch
 
-    def __getitem__(self, char):
-        index = (ord(char.lower()) - ord("a") + self.offset) % 26
-        return self.mapping[index]
+    def mapping(self, char, backwards=False):
+        offsetted_char = chr(
+            (ord(char.lower()) - ord("a") + self.offset) % 26 + ord("a")
+        )
+        if backwards:
+            return self.mapping_back[offsetted_char]
+        else:
+            return self.mapping_ahead[offsetted_char]
 
     def rotate(self):
         self.offset = (self.offset + 1) % 26
@@ -26,15 +35,16 @@ class Rotor:
         return chr(self.offset + ord("a"))
 
 
-class Reflector(Rotor):
-    def __init__(self, mapping):
-        self.mapping = mapping
-        self.offset = 0
+class Reflector:
+    def __init__(self, listmapping: list):
+        self.mapping_twoway = dict(zip(ascii_lowercase, listmapping))
 
-        for idx, to_ in enumerate(mapping):
-            from_ = chr(idx + ord("a"))
-            if self[from_] != to_:
+        for k, v in self.mapping_twoway.items():
+            if self.mapping_twoway[v] != k:
                 raise ValueError("Wrong mapping. Reflector must have 2-way mapping.")
+
+    def mapping(self, char):
+        return self.mapping_twoway[char]
 
 
 class Enigma:
@@ -59,11 +69,16 @@ class Enigma:
 
         self.rotate_mechanism()
 
-        righttoleft = self.left_rotor[self.mid_rotor[self.right_rotor[char]]]
-        reflected = self.reflector[righttoleft]
-        lefttoright = self.right_rotor[self.mid_rotor[self.left_rotor[reflected]]]
+        output = self.right_rotor.mapping(char)
+        output = self.mid_rotor.mapping(output)
+        output = self.left_rotor.mapping(output)
+        output = self.reflector.mapping(output)
+        output = self.left_rotor.mapping(output, backwards=True)
+        output = self.mid_rotor.mapping(output, backwards=True)
+        output = self.right_rotor.mapping(output, backwards=True)
+        print("@", output)
 
-        return lefttoright
+        return output
 
     def rotate_mechanism(self):
         L = self.left_rotor
@@ -92,6 +107,8 @@ class Enigma:
         if l_should_rotate:
             L.rotate()
 
+        self.display_position()
+
     def display_position(self):
         left = self.left_rotor.current_position()
         mid = self.mid_rotor.current_position()
@@ -106,7 +123,8 @@ class Enigma:
 def main():
     enigma1_rotorI = Rotor(list("ekmflgdqvzntowyhxuspaibrcj"), turnover_notch=["q"])
     enigma1_rotorII = Rotor(list("ajdksiruxblhwtmcqgznpyfvoe"), turnover_notch=["e"])
-    enigma1_rotorIII = Rotor(list("bdfhjlcprtxvznyeiwgakmusqo"), turnover_notch=["v"])
+    enigma1_rotorIII = Rotor(list("bdfhjlcprtxvznyeiwgakmusqo"), turnover_notch=["v"], 
+                                                        start_position="z")
     enigma1_wide_B_reflector = Reflector(list("yruhqsldpxngokmiebfzcwvjat"))
 
     my_enigma = Enigma(
@@ -117,8 +135,8 @@ def main():
         double_step=True,
     )
 
-    print(my_enigma.encrypt("hello."))
-
+    print(my_enigma.encrypt("a"))
+    print(my_enigma.encrypt("a"))
 
 if __name__ == "__main__":
     main()
