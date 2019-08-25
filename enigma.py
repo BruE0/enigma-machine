@@ -18,8 +18,8 @@ class Rotor:
         self.mapping_ahead = deque(listmapping, maxlen=26)
         self.mapping_back = deque(ascii_lowercase, maxlen=26)
         offset = self.mapping_back.index(start_position)
-        self.mapping_ahead.rotate(offset)
-        self.mapping_back.rotate(offset)
+        self.mapping_ahead.rotate(-offset)
+        self.mapping_back.rotate(-offset)
         self.turnover_notch = turnover_notch
 
     def mapping(self, char, backwards=False):
@@ -34,11 +34,10 @@ class Rotor:
         return other[index]
 
     def rotate(self):
-        self.mapping_back.rotate(1)
+        self.mapping_back.rotate(-1)
 
     def current_position(self):
-        index = self.mapping_back.index("a")
-        return chr(index + ord("a"))
+        return self.mapping_back[0]
 
 
 class Reflector:
@@ -147,15 +146,18 @@ def main():
         double_step=True,
     )
 
-    my_enigma.set_position("AAA")
-    encrypted = my_enigma.encrypt("hello")
 
-    print(f"hello was encrypted to {encrypted}!")
+    word = "hello"
+
+    my_enigma.set_position("AAA")
+    encrypted = my_enigma.encrypt(word)
+
+    print(f"{word} was encrypted to {encrypted} !")
 
     my_enigma.set_position("AAA")
     decrypted = my_enigma.encrypt(encrypted)
 
-    print(f"{encrypted} was decrypted to {decrypted}!!")
+    print(f"{encrypted} was decrypted to {decrypted} !")
 
 
 if __name__ == "__main__":

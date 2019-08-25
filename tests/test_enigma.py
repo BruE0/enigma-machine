@@ -42,7 +42,7 @@ class EnigmaTest(unittest.TestCase):
 
     def test_encryption_decryption(self):
         """ Test long_text.txt for mistakes in encryption/decryption """
-        with open(r"tests\long_text.txt", "r") as f:
+        with open("tests/long_text.txt", "r") as f:
             data = f.read()
 
         self.my_enigma.set_position("AAZ")
