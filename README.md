@@ -41,12 +41,13 @@ Kinda like AAZ becoming ABA, but rotors have notch positions in different letter
 Also, there's the whole double-step issue to boot.
 
 
-### Important Detail:
+### Important Details:
 
-When a key is pressed, the rotors rotate first, then the wirings process the input/output. So if the rotors were at positions
-AAA and you pressed a key, the output would follow the internal wirings of the AAB configuration.
+(1) When a key is pressed, the rotors rotate first, then the wirings process the input/output. 
+
+So if the rotors were at positions AAA and you pressed a key, the output would follow the internal wirings of the AAB configuration.
 
 
-When a rotor has stepped, the offset must be taken into account to know what the output is, and where it enters the next rotor.
+(2) When a rotor has stepped, the offset must be taken into account to know what the output is, and where it enters the next rotor.
 
 If for example rotor I is in the B-position, an A enters at the letter B which is wired to the K. Because of the offset this K enters the next rotor in the J position.
