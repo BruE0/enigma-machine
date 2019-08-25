@@ -18,7 +18,7 @@ class Rotor:
         self.mapping_ahead = deque(listmapping, maxlen=26)
         self.mapping_back = deque(ascii_lowercase, maxlen=26)
         offset = self.mapping_back.index(start_position)
-        self.mapping_back.rotate(-offset)
+        self.mapping_back.rotate(offset)
         self.turnover_notch = turnover_notch
 
     def mapping(self, char, backwards=False):
@@ -37,6 +37,10 @@ class Rotor:
 
     def current_position(self):
         return self.mapping_back[0]
+
+    def set_position(self, char):
+        index = self.mapping_back.index(char)
+        self.mapping_back.rotate(-index)
 
 
 class Reflector:
@@ -120,12 +124,9 @@ class Enigma:
     def set_position(self, position):
         L, M, R = [char.lower() for char in position]
 
-        while self.left_rotor.current_position() != L:
-            self.left_rotor.rotate()
-        while self.mid_rotor.current_position() != M:
-            self.mid_rotor.rotate()
-        while self.right_rotor.current_position() != R:
-            self.right_rotor.rotate()
+        self.left_rotor.set_position(L)
+        self.mid_rotor.set_position(M)
+        self.right_rotor.set_position(R)
 
     def encrypt(self, text):
         return "".join([self[char] for char in text])
