@@ -1,8 +1,9 @@
 # enigma-machine
 
-https://en.wikipedia.org/wiki/Enigma_rotor_details
-
 https://en.wikipedia.org/wiki/Enigma_machine
+
+
+https://en.wikipedia.org/wiki/Enigma_rotor_details
 
 - [X] Rotor substitution cypher (duh).
 - [X] Proper 3 rotors + reflector setup, i.e., will go right to left, then reflector, then left to right as per usual.
