@@ -42,13 +42,12 @@ class EnigmaTest(unittest.TestCase):
 
     def test_encryption_decryption(self):
         """ Test long_text.txt for mistakes in encryption/decryption """
-        with open("tests/long_text.txt", "r") as f:
+        with open("tests/test_lowercase.txt", "r") as f:
             data = f.read()
 
-        self.my_enigma.set_position("AAZ")
+        self.my_enigma.set_position("AAA")
         encrypted = self.my_enigma.encrypt(data)
-        self.my_enigma.set_position("AAZ")
+        self.my_enigma.set_position("AAA")
         decrypted = self.my_enigma.encrypt(encrypted)
 
-        self.assertEqual([char.lower() for char in data], list(decrypted))
-
+        self.assertEqual(decrypted, data) 
