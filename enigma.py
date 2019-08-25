@@ -3,7 +3,7 @@
 """
     enigma.py
     2019.08
-    v1.01
+    v1.2
 """
 
 
@@ -75,7 +75,7 @@ class Enigma:
 
         self.rotate_mechanism()
 
-        output = self.right_rotor.mapping(char)
+        output = self.right_rotor.mapping(char.lower())
         output = self.mid_rotor.mapping(output)
         output = self.left_rotor.mapping(output)
         output = self.reflector.mapping(output)
