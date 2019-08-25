@@ -3,26 +3,41 @@
 """
     enigma.py
     2019.08
-    v1.2
+    v1.3
 """
 
 
 from string import ascii_lowercase
 
 
+def chr2int(char):
+    return ord(char.lower()) - ord("a")
+
+
+def int2char(intt):
+    return chr(intt + ord("a"))
+
+
 class Rotor:
     def __init__(
         self, listmapping: list, turnover_notch: list = [], start_position: str = "a"
     ):
-        self.mapping = listmapping
-        offset = ord(start_position) - ord("a")
+        self.mapping = dict(zip(ascii_lowercase, listmapping))
+        self.backmapping = dict(zip(listmapping, ascii_lowercase))
+        self.offset = ord(start_position) - ord("a")
         self.turnover_notch = turnover_notch
 
     def forward(self, char):
-        return self.mapping[(ord(char) - ord("a") + self.offset) % 26]
+        offsetted_char = int2char((chr2int(char) + self.offset)%26)
+        rotor_internal_mapping = self.mapping[offsetted_char]
+        end_position_for_next = int2char((chr2int(rotor_internal_mapping) - self.offset)%26)
+        return end_position_for_next
 
     def backward(self, char):
-        return chr((self.mapping.index(char) - self.offset) % 26 + ord("a"))
+        offsetted_char = int2char((chr2int(char) + self.offset)%26)
+        rotor_internal_mapping = self.backmapping[offsetted_char]
+        end_position_for_next = int2char((chr2int(rotor_internal_mapping) - self.offset)%26)
+        return end_position_for_next
 
     def rotate(self):
         self.offset = (self.offset + 1) % 26
