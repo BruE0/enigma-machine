@@ -35,11 +35,13 @@ which letter "G" maps to to get your rotor output, since "G" is 1 offset of "F".
 
 Each rotor has its turnover notch positions, which signal when the next rotor must move.
 
-Kinda like AAZ becoming ABA, but rotors have notch positions in different letters. There's also the double-step issue.
+Kinda like AAZ becoming ABA, but rotors have notch positions in different letters, not Z->A. 
+
+Also, there's the whole double-step issue to boot.
 
 
 ### Important Detail:
 
 When a key is pressed, the rotors rotate first, then the wirings process the input/output. So if the rotors were at positions
-AAA, and you pressed a key, the output would follow the internal wirings of the AAB rotor positions.
+AAA and you pressed a key, the output would follow the internal wirings of the AAB configuration.
 

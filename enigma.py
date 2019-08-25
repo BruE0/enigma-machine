@@ -3,12 +3,13 @@
 """
     enigma.py
     2019.08
-    v1.0
+    v1.01
 """
 
 
 from string import ascii_lowercase
 from collections import deque
+
 
 class Rotor:
     def __init__(
@@ -111,14 +112,12 @@ class Enigma:
         if l_should_rotate:
             L.rotate()
 
-
     def display_position(self):
         left = self.left_rotor.current_position()
         mid = self.mid_rotor.current_position()
         right = self.right_rotor.current_position()
 
         print(f"{left.upper()}{mid.upper()}{right.upper()}")
-
 
     def set_position(self, position):
         L, M, R = [char.lower() for char in position]
@@ -129,7 +128,6 @@ class Enigma:
             self.mid_rotor.rotate()
         while self.right_rotor.current_position() != R:
             self.right_rotor.rotate()
-
 
     def encrypt(self, text):
         return "".join([self[char] for char in text])
@@ -151,7 +149,6 @@ def main():
 
     my_enigma.set_position("AAA")
     encrypted = my_enigma.encrypt("hello")
-    
 
     print(f"hello was encrypted to {encrypted}!")
 
