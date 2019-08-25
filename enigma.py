@@ -3,36 +3,40 @@
 """
     enigma.py
     2019.08
-    v0.9
+    v1.0
 """
 
 
 from string import ascii_lowercase
-import logging
+from collections import deque
 
 class Rotor:
     def __init__(
         self, listmapping: list, turnover_notch: list = [], start_position: str = "a"
     ):
-        self.mapping_ahead = dict(zip(ascii_lowercase, listmapping))
-        self.mapping_back = dict(zip(listmapping, ascii_lowercase))
-        self.offset = ord(start_position) - ord("a")
+        self.mapping_ahead = deque(listmapping, maxlen=26)
+        self.mapping_back = deque(ascii_lowercase, maxlen=26)
+        offset = self.mapping_back.index(start_position)
+        self.mapping_ahead.rotate(-offset)
+        self.mapping_back.rotate(-offset)
         self.turnover_notch = turnover_notch
 
     def mapping(self, char, backwards=False):
-        offsetted_char = chr(
-            (ord(char.lower()) - ord("a") + self.offset) % 26 + ord("a")
-        )
         if backwards:
-            return self.mapping_back[offsetted_char]
+            mapp = self.mapping_back
+            other = self.mapping_ahead
         else:
-            return self.mapping_ahead[offsetted_char]
+            mapp = self.mapping_ahead
+            other = self.mapping_back
+
+        index = mapp.index(char)
+        return other[index]
 
     def rotate(self):
-        self.offset = (self.offset + 1) % 26
+        self.mapping_back.rotate(1)
 
     def current_position(self):
-        return chr(self.offset + ord("a"))
+        return self.mapping_back[0]
 
 
 class Reflector:
@@ -76,7 +80,6 @@ class Enigma:
         output = self.left_rotor.mapping(output, backwards=True)
         output = self.mid_rotor.mapping(output, backwards=True)
         output = self.right_rotor.mapping(output, backwards=True)
-        print("@", output)
 
         return output
 
@@ -107,7 +110,6 @@ class Enigma:
         if l_should_rotate:
             L.rotate()
 
-        self.display_position()
 
     def display_position(self):
         left = self.left_rotor.current_position()
@@ -116,6 +118,18 @@ class Enigma:
 
         print(f"{left.upper()}{mid.upper()}{right.upper()}")
 
+
+    def set_position(self, position):
+        L, M, R = [char.lower() for char in position]
+
+        while self.left_rotor.current_position() != L:
+            self.left_rotor.rotate()
+        while self.mid_rotor.current_position() != M:
+            self.mid_rotor.rotate()
+        while self.right_rotor.current_position() != R:
+            self.right_rotor.rotate()
+
+
     def encrypt(self, text):
         return "".join([self[char] for char in text])
 
@@ -123,8 +137,7 @@ class Enigma:
 def main():
     enigma1_rotorI = Rotor(list("ekmflgdqvzntowyhxuspaibrcj"), turnover_notch=["q"])
     enigma1_rotorII = Rotor(list("ajdksiruxblhwtmcqgznpyfvoe"), turnover_notch=["e"])
-    enigma1_rotorIII = Rotor(list("bdfhjlcprtxvznyeiwgakmusqo"), turnover_notch=["v"], 
-                                                        start_position="z")
+    enigma1_rotorIII = Rotor(list("bdfhjlcprtxvznyeiwgakmusqo"), turnover_notch=["v"])
     enigma1_wide_B_reflector = Reflector(list("yruhqsldpxngokmiebfzcwvjat"))
 
     my_enigma = Enigma(
@@ -135,8 +148,17 @@ def main():
         double_step=True,
     )
 
-    print(my_enigma.encrypt("a"))
-    print(my_enigma.encrypt("a"))
+    my_enigma.set_position("AAA")
+    encrypted = my_enigma.encrypt("hello")
+    
+
+    print(f"hello was encrypted to {encrypted}!")
+
+    my_enigma.set_position("AAA")
+    decrypted = my_enigma.encrypt(encrypted)
+
+    print(f"{encrypted} was decrypted to {decrypted}!!")
+
 
 if __name__ == "__main__":
     main()
