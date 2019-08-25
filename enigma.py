@@ -8,39 +8,30 @@
 
 
 from string import ascii_lowercase
-from collections import deque
 
 
 class Rotor:
     def __init__(
         self, listmapping: list, turnover_notch: list = [], start_position: str = "a"
     ):
-        self.mapping_ahead = deque(listmapping, maxlen=26)
-        self.mapping_back = deque(ascii_lowercase, maxlen=26)
-        offset = self.mapping_back.index(start_position)
-        self.mapping_back.rotate(offset)
+        self.mapping = listmapping
+        offset = ord(start_position) - ord("a")
         self.turnover_notch = turnover_notch
 
-    def mapping(self, char, backwards=False):
-        if backwards:
-            mapp = self.mapping_back
-            other = self.mapping_ahead
-        else:
-            mapp = self.mapping_ahead
-            other = self.mapping_back
+    def forward(self, char):
+        return self.mapping[(ord(char) - ord("a") + self.offset) % 26]
 
-        index = mapp.index(char)
-        return other[index]
+    def backward(self, char):
+        return chr((self.mapping.index(char) - self.offset) % 26 + ord("a"))
 
     def rotate(self):
-        self.mapping_back.rotate(-1)
+        self.offset = (self.offset + 1) % 26
 
     def current_position(self):
-        return self.mapping_back[0]
+        return chr(self.offset + ord("a"))
 
     def set_position(self, char):
-        index = self.mapping_back.index(char)
-        self.mapping_back.rotate(-index)
+        self.offset = ord(char) - ord("a")
 
 
 class Reflector:
@@ -77,13 +68,13 @@ class Enigma:
 
         self.rotate_mechanism()
 
-        output = self.right_rotor.mapping(char.lower())
-        output = self.mid_rotor.mapping(output)
-        output = self.left_rotor.mapping(output)
+        output = self.right_rotor.forward(char.lower())
+        output = self.mid_rotor.forward(output)
+        output = self.left_rotor.forward(output)
         output = self.reflector.mapping(output)
-        output = self.left_rotor.mapping(output, backwards=True)
-        output = self.mid_rotor.mapping(output, backwards=True)
-        output = self.right_rotor.mapping(output, backwards=True)
+        output = self.left_rotor.backward(output)
+        output = self.mid_rotor.backward(output)
+        output = self.right_rotor.backward(output)
 
         return output
 
@@ -149,12 +140,12 @@ def main():
 
     word = "hello"
 
-    my_enigma.set_position("AAA")
+    my_enigma.set_position("aaa")
     encrypted = my_enigma.encrypt(word)
 
     print(f"{word} was encrypted to {encrypted} !")
 
-    my_enigma.set_position("AAA")
+    my_enigma.set_position("aaa")
     decrypted = my_enigma.encrypt(encrypted)
 
     print(f"{encrypted} was decrypted to {decrypted} !")
