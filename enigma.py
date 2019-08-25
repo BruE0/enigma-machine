@@ -18,7 +18,6 @@ class Rotor:
         self.mapping_ahead = deque(listmapping, maxlen=26)
         self.mapping_back = deque(ascii_lowercase, maxlen=26)
         offset = self.mapping_back.index(start_position)
-        self.mapping_ahead.rotate(-offset)
         self.mapping_back.rotate(-offset)
         self.turnover_notch = turnover_notch
 
