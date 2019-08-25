@@ -17,8 +17,8 @@ class Rotor:
         self.mapping_ahead = deque(listmapping, maxlen=26)
         self.mapping_back = deque(ascii_lowercase, maxlen=26)
         offset = self.mapping_back.index(start_position)
-        self.mapping_ahead.rotate(-offset)
-        self.mapping_back.rotate(-offset)
+        self.mapping_ahead.rotate(offset)
+        self.mapping_back.rotate(offset)
         self.turnover_notch = turnover_notch
 
     def mapping(self, char, backwards=False):
@@ -36,7 +36,8 @@ class Rotor:
         self.mapping_back.rotate(1)
 
     def current_position(self):
-        return self.mapping_back[0]
+        index = self.mapping_back.index("a")
+        return chr(index + ord("a"))
 
 
 class Reflector:
