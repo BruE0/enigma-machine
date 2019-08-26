@@ -8,9 +8,13 @@ https://en.wikipedia.org/wiki/Enigma_rotor_details
 - [X] Rotor substitution cypher (duh).
 - [X] Proper 3 rotors + reflector setup, i.e., will go right to left, then reflector, then left to right as per usual.
 - [X] Ring offset and rotation, considering the **double-step** anomaly.
-- [ ] Ring "settings". 
-I'm still confused about this, it seems like an aditional offset that is added on top of the regular one.
-Internet says it is an internal wire offset not accounted for in the rotor character display.
+ accounted for in the rotor character display.
+
+TO DO:
+
+- [ ] Rotor internal "settings". 
+(an aditional offset that is added on top of the regular one that is internal and doesn't change the outside label)
+- [ ] Graphical display.
 
 
 ---
